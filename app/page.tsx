@@ -1,4 +1,5 @@
 
+import { Navigation } from '@/components/Navigation';
 import { BookList } from '../components/BookList'
 import { Cart } from '../components/Cart'
 
@@ -13,6 +14,7 @@ const books = [
 export default function Home() {
   return (
     <main className="container mx-auto px-4 py-8">
+        <Navigation/>
       <h1 className="text-3xl font-bold mb-8">My Bookstore</h1>
       <div className="flex flex-col md:flex-row gap-8">
         <div className="md:w-2/3">
