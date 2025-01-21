@@ -3,6 +3,7 @@ import { Navigation } from '@/components/Navigation';
 import { BookList } from '../components/BookList'
 import { Cart } from '../components/Cart'
 
+
 const books = [
   { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 9.99 },
   { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 12.99 },
@@ -23,6 +24,7 @@ export default function Home() {
         </div>
         <div className="md:w-1/3">
           <Cart />
+          
         </div>
       </div>
     </main>

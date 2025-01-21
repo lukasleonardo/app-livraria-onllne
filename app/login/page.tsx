@@ -1,12 +1,21 @@
 'use client'
-import {useState} from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import {useEffect, useState} from 'react'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Login(){
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
     const router = useRouter()
+    const {data: session,status} = useSession()
+    const searchParams = useSearchParams()
+    const redirect = searchParams?.get("redirect")|| "/"
+
+    useEffect(()=>{
+      if(status==="authenticated"){
+        router.push(redirect)
+      }
+    },[status,router,redirect])
 
     const handleSubmit = async(e: React.FormEvent)=>{
         e.preventDefault()
@@ -23,7 +32,13 @@ export default function Login(){
 
     }
 
+    if(status==="loading"){
+      return <p>Loading...</p>
+    }
 
+    if(status==="authenticated"){
+      return null
+    }
 
     return(
         <div className="flex justify-center items-center h-screen">

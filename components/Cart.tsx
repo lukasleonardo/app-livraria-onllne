@@ -1,6 +1,8 @@
 'use client'
 import { useAppSelector, useAppDispatch } from "@/lib/hooks"
 import { removeFromCart } from "@/lib/cartSlice"
+import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 export function Cart(){
     const cartItems = useAppSelector((state)=> state.cart.items)
@@ -9,7 +11,7 @@ export function Cart(){
         dispactch(removeFromCart(id))
     }
     const total = cartItems.reduce((sum,item)=>sum+item.price,0)
-
+    const {status}= useSession()
 
     return(
 
@@ -19,8 +21,8 @@ export function Cart(){
         <p>Your cart is empty</p>
       ) : (
         <>
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex justify-between items-center mb-2">
+          {cartItems.map((item,index) => (
+            <div key={index} className="flex justify-between items-center mb-2">
               <span>{item.title}</span>
               <span>${item.price.toFixed(2)}</span>
               <button
@@ -33,6 +35,13 @@ export function Cart(){
           ))}
           <div className="mt-4 text-right">
             <strong>Total: ${total.toFixed(2)}</strong>
+          </div>
+          <div className="mt-4">
+          <Link
+              href={status === "authenticated" ? "/checkout" : "/login?redirect=/checkout"}
+              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+            >Proceed to Checkout
+            </Link>
           </div>
         </>
       )}
