@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { clearCart } from "@/lib/cartSlice"
+import { clearCart, removeFromCart } from "@/lib/cartSlice"
 import { useSession } from "next-auth/react"
 
 
@@ -24,6 +24,9 @@ export default function Checkout(){
 
     const total = cartItems.reduce((sum,item)=>sum+item.price,0)
 
+    const handleRemoveFromCart = (id:number)=>{       
+            dispactch(removeFromCart(id))
+        }
     const handleSubmit=(e:React.FormEvent)=>{
         e.preventDefault()
         console.log('order submitted', {name,email,address,items:cartItems,total})
@@ -87,10 +90,16 @@ export default function Checkout(){
         </div>
         <div>
           <h3 className="font-bold">Order Summary</h3>
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex justify-between">
+          {cartItems.map((item,index) => (
+            <div key={index} className="flex justify-between">
               <span>{item.title}</span>
               <span>${item.price.toFixed(2)}</span>
+              <button
+                onClick={() => handleRemoveFromCart(item.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Remove
+              </button>
             </div>
           ))}
           <div className="font-bold mt-2">Total: ${total.toFixed(2)}</div>
