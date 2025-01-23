@@ -1,18 +1,26 @@
-
+'use client'
 import { Navigation } from '@/components/Navigation';
 import { BookList } from '../components/BookList'
 import { Cart } from '../components/Cart'
+import { useQuery} from '@tanstack/react-query';
+import { Book } from '@/components/BookItem';
+import axios from 'axios';
 
 
-const books = [
-  { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 9.99 },
-  { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 12.99 },
-  { id: 3, title: '1984', author: 'George Orwell', price: 10.99 },
-  { id: 4, title: 'Pride and Prejudice', author: 'Jane Austen', price: 8.99 },
-  { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', price: 11.99 },
-]
+const fetchGroups = (): Promise<Book[]> =>
+  axios.get('/api/books').then((response) => response.data)
+
+
+
 
 export default function Home() {
+  
+  const { data: books, isLoading, error } = useQuery({ queryKey: ['books'], queryFn: fetchGroups })
+
+  if (isLoading)return <div>Loading...</div>  
+  if(error) return <div>An error ocurred {error.message}</div>
+
+
   return (
     <main className="container mx-auto px-4 py-8">
         <Navigation/>
