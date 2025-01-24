@@ -2,6 +2,7 @@
 import {useEffect, useState} from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Login(){
     const [email,setEmail] = useState('')
@@ -77,6 +78,12 @@ export default function Login(){
             Sign In
           </button>
         </div>
+        <Link
+              href="/forgot-password"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Reset password
+        </Link>
       </form>
     </div>
     )

@@ -27,11 +27,25 @@ export default function Checkout(){
     const handleRemoveFromCart = (id:number)=>{       
             dispactch(removeFromCart(id))
         }
-    const handleSubmit=(e:React.FormEvent)=>{
+    const handleSubmit= async (e:React.FormEvent)=>{
         e.preventDefault()
-        console.log('order submitted', {name,email,address,items:cartItems,total})
-        dispactch(clearCart())
-        router.push("/confirmation")
+        try{
+          console.log('order submitted', {name,email,address,items:cartItems,total})
+          const emailRes = await fetch("/api/email/order-confirmation", 
+            {
+              method:"POST",
+              body:JSON.stringify(
+                {email,orderDetails:{name,email,address,items:cartItems,total}})})
+              if (!emailRes.ok) {
+                throw new Error("Failed to send order confirmation email")
+              }
+          dispactch(clearCart())
+          router.push("/confirmation")
+        }catch(error){
+          console.error("Error processing order:", error)
+          alert("There was an error processing your order. Please try again.")
+        }
+        
     }
 
     if(status==="loading"){

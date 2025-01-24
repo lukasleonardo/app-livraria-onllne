@@ -14,7 +14,7 @@ type Book = {
     { id: 5, title: "The Catcher in the Rye", author: "J.D. Salinger", price: 11.99 },
   ]
   
-  export default function handler(req: NextApiRequest, res: NextApiResponse<Book[]>) {
+  export default function booksHandler(req: NextApiRequest, res: NextApiResponse<Book[]>) {
     res.status(200).json(books)
   }
   

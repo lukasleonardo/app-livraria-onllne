@@ -10,6 +10,7 @@ const users = [
     name: 'John Doe',
     email: 'john@example.com',
     password: bcrypt.hashSync('password123', 10),
+    oauth: true
   },
 ]
 
@@ -29,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         const user = users.find(user => user.email === credentials.email)
         
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
-          return { id: user.id.toString(), name: user.name, email: user.email }
+          return { id: user.id.toString(), name: user.name, email: user.email, oauth: user.oauth }
         }
         
         return null

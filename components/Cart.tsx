@@ -4,7 +4,7 @@ import { removeFromCart } from "@/lib/cartSlice"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 
-export function Cart(){
+export default function Cart(){
     const cartItems = useAppSelector((state)=> state.cart.items)
     const dispactch = useAppDispatch()
     const handleRemoveFromCart = (id:number)=>{       
