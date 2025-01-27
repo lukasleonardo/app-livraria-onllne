@@ -4,26 +4,51 @@ import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { clearCart, removeFromCart } from "@/lib/cartSlice"
 import { useSession } from "next-auth/react"
+import { useQuery } from "@tanstack/react-query"
+import  {ShippingRate} from "@/pages/api/shipping-calculation"
+async function calculateShippingRate(cep:string):Promise<ShippingRate> {
+  const response = await fetch("/api/shipping-calculation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ cep }),
+  });
+  if (!response.ok) { 
+    throw new Error("Failed to calculate shipping rate")
+  }
+  return response.json();
+}
 
-
-
-export default function Checkout(){
+export default async function Checkout(){
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [address, setAddress] = useState('')
+    const [cep, setCep] = useState('')
     const cartItems = useAppSelector((state)=>state.cart.items)
     const dispactch = useAppDispatch()
     const router = useRouter()
     const {data:session,status}= useSession()
 
-    useEffect(()=>{
-        if(status==="unauthenticated"){
-            router.push("/login?redirect=/checkout")
-        }
-    },[status,router])
+    
+    const subTotal = cartItems.reduce((sum,item)=>sum+item.price,0)
+    
+    const {data:shippingData, refetch:refetchShipping}= useQuery(
+      {queryKey:["shipping",cep], 
+      queryFn:()=>calculateShippingRate(cep), 
+      enabled:false,
+      retry:false
+    })
+   
+      
+      const shippingCost = shippingData?.rate || 0  
+      const total = subTotal + shippingCost
 
-    const total = cartItems.reduce((sum,item)=>sum+item.price,0)
-
+      useEffect(()=>{
+          if(status==="unauthenticated"){
+              router.push("/login?redirect=/checkout")
+          }
+      },[status,router])
     const handleRemoveFromCart = (id:number)=>{       
             dispactch(removeFromCart(id))
         }
@@ -60,8 +85,14 @@ export default function Checkout(){
     }
 
 
+    const handleCepBlur = ()=>{
+      if(cep.length===8){
+        refetchShipping()
+        }
+      }
+
     return(
-        <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4">Checkout</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -103,8 +134,23 @@ export default function Checkout(){
           />
         </div>
         <div>
+          <label htmlFor="cep" className="block mb-1">
+            CEP
+          </label>
+          <input
+            type="text"
+            id="cep"
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+            onBlur={handleCepBlur}
+            required
+            maxLength={8}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div>
           <h3 className="font-bold">Order Summary</h3>
-          {cartItems.map((item,index) => (
+                    {cartItems.map((item,index) => (
             <div key={index} className="flex justify-between">
               <span>{item.title}</span>
               <span>${item.price.toFixed(2)}</span>
@@ -116,7 +162,18 @@ export default function Checkout(){
               </button>
             </div>
           ))}
-          <div className="font-bold mt-2">Total: ${total.toFixed(2)}</div>
+          <div className="flex justify-between mt-2">
+            <span>Subtotal:</span>
+            <span>${subTotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Shipping:</span>
+            <span>${shippingCost.toFixed(2)}</span>
+          </div>
+          <div className="font-bold mt-2 flex justify-between">
+            <span>Total:</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
         </div>
         <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
           Place Order
@@ -125,3 +182,8 @@ export default function Checkout(){
     </div>
     )
 }
+
+
+
+
+
