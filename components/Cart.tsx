@@ -14,27 +14,23 @@ export default function Cart(){
     const {status}= useSession()
 
     return(
-
-    <div className="border p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Cart</h2>
+      <div className="border border-muted p-4 rounded-lg shadow-md bg-background">
+      <h2 className="text-xl font-bold mb-4 text-foreground">Cart</h2>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty</p>
+        <p className="text-muted-foreground">Your cart is empty</p>
       ) : (
         <>
           {cartItems.map((item,index) => (
             <div key={index} className="flex justify-between items-center mb-2">
-              <span>{item.title}</span>
-              <span>${item.price.toFixed(2)}</span>
-              <button
-                onClick={() => handleRemoveFromCart(item.id)}
-                className="text-red-500 hover:text-red-700"
-              >
+              <span className="text-foreground">{item.title}</span>
+              <span className="text-foreground">${item.price.toFixed(2)}</span>
+              <button onClick={() => handleRemoveFromCart(item.id)} className="text-primary hover:text-primary/90">
                 Remove
               </button>
             </div>
           ))}
           <div className="mt-4 text-right">
-            <strong>Total: ${total.toFixed(2)}</strong>
+          <strong className="text-foreground">Total: ${total.toFixed(2)}</strong>
           </div>
           <div className="mt-4">
           <Link

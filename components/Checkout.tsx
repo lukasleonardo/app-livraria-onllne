@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { clearCart, removeFromCart } from "@/lib/cartSlice"
@@ -20,7 +20,7 @@ async function calculateShippingRate(cep:string):Promise<ShippingRate> {
   return response.json();
 }
 
-export default async function Checkout(){
+export default function Checkout(){
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [address, setAddress] = useState('')
@@ -29,7 +29,7 @@ export default async function Checkout(){
     const dispactch = useAppDispatch()
     const router = useRouter()
     const {data:session,status}= useSession()
-
+    const prevCep = useRef('')
     
     const subTotal = cartItems.reduce((sum,item)=>sum+item.price,0)
     
@@ -43,7 +43,8 @@ export default async function Checkout(){
       
       const shippingCost = shippingData?.rate || 0  
       const total = subTotal + shippingCost
-
+      
+      
       useEffect(()=>{
           if(status==="unauthenticated"){
               router.push("/login?redirect=/checkout")
@@ -73,7 +74,18 @@ export default async function Checkout(){
         
     }
 
-    if(status==="loading"){
+    
+
+    useEffect(()=>{
+      if(cep.length===8 && cep!==prevCep.current){
+          refetchShipping()
+          prevCep.current = cep
+      }
+      },[cep,refetchShipping])
+
+      
+
+      if(status==="loading"){
         return <p>Loading...</p>
     }
 
@@ -84,12 +96,6 @@ export default async function Checkout(){
         return <p>Your cart is empty</p>
     }
 
-
-    const handleCepBlur = ()=>{
-      if(cep.length===8){
-        refetchShipping()
-        }
-      }
 
     return(
       <div className="max-w-md mx-auto">
@@ -142,7 +148,6 @@ export default async function Checkout(){
             id="cep"
             value={cep}
             onChange={(e) => setCep(e.target.value)}
-            onBlur={handleCepBlur}
             required
             maxLength={8}
             className="w-full px-3 py-2 border rounded"

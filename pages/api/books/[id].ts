@@ -1,11 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type{NextApiRequest,NextApiResponse} from 'next'
 type Book = {
     id: number
     title: string
     author: string
     price: number
-    description?: string
+    description: string
   }
+
   // Mock data
   const books: Book[] = [
     { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", price: 9.99, description: "A classic novel about the American Dream in the Jazz Age." },
@@ -14,9 +15,13 @@ type Book = {
     { id: 4, title: "Pride and Prejudice", author: "Jane Austen", price: 8.99,description: ""  },
     { id: 5, title: "The Catcher in the Rye", author: "J.D. Salinger", price: 11.99,description: ""  },
   ]
-  
-  export default function booksHandler(req: NextApiRequest, res: NextApiResponse<Book[]>) {
-    res.status(200).json(books)
-  }
-  
-  
+
+
+export default function bookDetailsHandler(req: NextApiRequest, 
+    res: NextApiResponse<Book | {message:string}>) {
+        const{id} = req.query
+        const book = books.find((b) => b.id === Number(id))
+        if(!book) return res.status(404).json({message:'Book not found'})
+            else
+    res.status(200).json(book)
+}

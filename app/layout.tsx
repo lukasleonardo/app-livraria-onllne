@@ -2,6 +2,7 @@
 import "./globals.scss";
 import {Inter} from 'next/font/google'
 import {Providers} from './providers'
+import { Navigation } from "@/components/Navigation";
 
 const inter = Inter({subsets:['latin']})
 
@@ -10,15 +11,19 @@ export const metadata = {
   description: "A little bookstore",
 };
 
-export default function RootLayout({
-  children,
-}:{
-  children: React.ReactNode;
-}) {
+
+
+
+
+export default function RootLayout({children,}:{children: React.ReactNode;}) {
+
   return (
-    <html lang="en">
-      <body className={inter.className} >
-        <Providers>{children}</Providers>
+    <html lang="en" >
+      <body className={`${inter.className} themed-bg`} >
+      <Providers>
+      <Navigation/>  
+        {children}
+        </Providers>
       </body>
     </html>
   );

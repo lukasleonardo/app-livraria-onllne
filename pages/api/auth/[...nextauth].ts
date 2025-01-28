@@ -30,7 +30,22 @@ export const authOptions: NextAuthOptions = {
         const user = users.find(user => user.email === credentials.email)
         
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
-          return { id: user.id.toString(), name: user.name, email: user.email, oauth: user.oauth }
+          try{
+            await fetch(`${process.env.NEXTAUTH_URL}/api/email/login-confirmation`, {
+              method: 'POST',
+              body: JSON.stringify({email: user.email})
+            })
+          }catch(error){
+            console.error("Error sending login confirmation email:", error)
+          }
+
+
+
+
+          return { id: user.id.toString(), 
+            name: user.name, 
+            email: user.email, 
+            oauth: user.oauth }
         }
         
         return null
