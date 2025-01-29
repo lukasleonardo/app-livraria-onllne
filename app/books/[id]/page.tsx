@@ -28,22 +28,19 @@ export default function BookDetailsPage() {
         queryKey: ["book", id],
         queryFn: () => fetchBook(id),
     });
-    const { data: reviews, isLoading:isLoadingReviews, error:errorReviews } = useQuery({
-        queryKey: ["reviews", id],
-        queryFn: () => fetchReviews(id),
-    });
+    
 
-    if(isLoadingBook || isLoadingReviews) return <div>Loading...</div>
-    if(errorBook || errorReviews) return <div>An error ocurred {errorBook?.message || errorReviews?.message}</div>
+    if(isLoadingBook ) return <div>Loading...</div>
+    if(errorBook ) return <div>An error ocurred {errorBook?.message}</div>
    
 
     return (
-        <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">{book.title}</h1>
-      <p className="text-xl mb-2">By {book.author}</p>
-      <p className="text-lg mb-4">${book.price.toFixed(2)}</p>
-      <p className="mb-8">{book.description}</p>
-      <BookReviews bookId={book.id} initialReviews={reviews} />
-    </div>
-    );
+        <div className="container mx-auto px-4 py-8 themed-bg">
+          <h1 className="text-3xl font-bold mb-4 text-foreground">{book.title}</h1>
+          <p className="text-xl mb-2 text-foreground">By {book.author}</p>
+          <p className="text-lg mb-4 text-primary">${book.price.toFixed(2)}</p>
+          <p className="mb-8 text-foreground">{book.description}</p>
+          <BookReviews bookId={book.id} />
+        </div>
+      )
 }

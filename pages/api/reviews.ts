@@ -15,6 +15,8 @@ const reviews:Review[] = []
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({req})
+    console.log("Session: "+session)
+
     if(req.method === 'POST') {
         if(!session){ 
             return res.status(401).json({message:"You must be logged to submit a review"})

@@ -111,7 +111,7 @@ export default function Checkout(){
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded"
+            className="themed-input w-full px-3 py-2 border rounded"
           />
         </div>
         <div>
@@ -124,7 +124,7 @@ export default function Checkout(){
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded"
+            className="themed-input w-full px-3 py-2 border rounded"
           />
         </div>
         <div>
@@ -136,7 +136,7 @@ export default function Checkout(){
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded"
+            className=" themed-input w-full px-3 py-2 border rounded"
           />
         </div>
         <div>
@@ -150,7 +150,7 @@ export default function Checkout(){
             onChange={(e) => setCep(e.target.value)}
             required
             maxLength={8}
-            className="w-full px-3 py-2 border rounded"
+            className="themed-input w-full px-3 py-2 border rounded"
           />
         </div>
         <div>
