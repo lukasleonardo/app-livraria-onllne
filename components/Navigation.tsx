@@ -2,6 +2,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import DarkModeToggle from "./DarkModeToggle";
+import CartDropdown from "./CartDropdown";
 
 export function Navigation(){
     const {data:session}=useSession()
@@ -12,6 +13,7 @@ export function Navigation(){
             My Bookstore
           </Link>
           <div className="flex items-center space-x-4">
+            <CartDropdown/>
             <DarkModeToggle />
             {session ? (
               <>
