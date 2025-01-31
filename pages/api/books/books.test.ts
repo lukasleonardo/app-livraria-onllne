@@ -1,5 +1,5 @@
 import {createMocks} from 'node-mocks-http'
-import booksHandler from './books'
+import booksHandler from './index'
 
 describe('/api/books', () => {
     it('returns a list of books', async () => {
@@ -16,7 +16,8 @@ describe('/api/books', () => {
                 id: expect.any(Number), 
                 title: expect.any(String), 
                 author: expect.any(String), 
-                price: expect.any(Number)
+                price: expect.any(Number),
+                stock: expect.any(Number)
             })
         ])
     })

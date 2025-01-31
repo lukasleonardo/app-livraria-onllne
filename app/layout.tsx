@@ -3,6 +3,7 @@ import "./globals.scss";
 import {Inter} from 'next/font/google'
 import {Providers} from './providers'
 import { Navigation } from "@/components/Navigation";
+import type React from "react";
 
 const inter = Inter({subsets:['latin']})
 
@@ -10,9 +11,6 @@ export const metadata = {
   title: "My bookstore",
   description: "A little bookstore",
 };
-
-
-
 
 
 export default function RootLayout({children,}:{children: React.ReactNode;}) {

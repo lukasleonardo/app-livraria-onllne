@@ -1,11 +1,6 @@
 import { BookItem } from "./BookItem";
+import { Book} from '../pages/api/books/book-Interface'
 
-interface Book {
-  id: number
-  title: string
-  author: string
-  price: number
-}
 
 interface BookListProps{
     books?: Book[]

@@ -1,6 +1,7 @@
 import { removeFromCart } from "@/lib/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { ShoppingCart, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function CartDropdown() {
@@ -15,7 +16,7 @@ export default function CartDropdown() {
     const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
     return (
-        <div className="relative">
+        <div className="relative" onBlur={() => setIsOpen(false)}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center text-foreground"
@@ -37,8 +38,8 @@ export default function CartDropdown() {
                 <p className="text-muted-foreground">Your cart is empty</p>
               ) : (
                 <>
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center mb-2">
+                  {cartItems.map((item,index) => (
+                    <div key={index} className="flex justify-between items-center mb-2">
                       <span className="text-foreground">{item.title}</span>
                       <div className="flex items-center">
                         <span className="text-foreground mr-2">${item.price.toFixed(2)}</span>
@@ -54,6 +55,14 @@ export default function CartDropdown() {
                   ))}
                   <div className="mt-4 text-right">
                     <strong className="text-foreground">Total: ${total.toFixed(2)}</strong>
+                  </div>
+                  <div className="mt-4 text-right">
+                      <Link
+                        href={status === "authenticated" ? "/checkout" : "/login?redirect=/checkout"}
+                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                      >Proceed to Checkout
+                      </Link>
+
                   </div>
                 </>
               )}
