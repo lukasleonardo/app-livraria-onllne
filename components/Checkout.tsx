@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { clearCart, removeFromCart } from "@/lib/cartSlice"
+import { clearCart, removeFromCart, updateQuantity } from "@/lib/cartSlice"
 import { useSession } from "next-auth/react"
 import { useQuery } from "@tanstack/react-query"
 import  {ShippingRate} from "@/pages/api/shipping-calculation"
@@ -26,12 +26,21 @@ export default function Checkout(){
     const [address, setAddress] = useState('')
     const [cep, setCep] = useState('')
     const cartItems = useAppSelector((state)=>state.cart.items)
-    const dispactch = useAppDispatch()
+    const dispatch = useAppDispatch()
     const router = useRouter()
     const {data:session,status}= useSession()
     const prevCep = useRef('')
     
-    const subTotal = cartItems.reduce((sum,item)=>sum+item.price,0)
+    useEffect(() => {
+      // Check stock and update quantities if necessary
+      cartItems.forEach((item) => {
+        if (item.quantity > item.stock) {
+          dispatch(updateQuantity({ id: item.id, quantity: item.stock }))
+        }
+      })
+    }, [cartItems, dispatch])
+  
+    const subTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     
     const {data:shippingData, refetch:refetchShipping}= useQuery(
       {queryKey:["shipping",cep], 
@@ -51,7 +60,7 @@ export default function Checkout(){
           }
       },[status,router])
     const handleRemoveFromCart = (id:number)=>{       
-            dispactch(removeFromCart(id))
+            dispatch(removeFromCart(id))
         }
     const handleSubmit= async (e:React.FormEvent)=>{
         e.preventDefault()
@@ -65,7 +74,7 @@ export default function Checkout(){
               if (!emailRes.ok) {
                 throw new Error("Failed to send order confirmation email")
               }
-          dispactch(clearCart())
+          dispatch(clearCart())
           router.push("/confirmation")
         }catch(error){
           console.error("Error processing order:", error)
@@ -157,8 +166,10 @@ export default function Checkout(){
           <h3 className="font-bold">Order Summary</h3>
                     {cartItems.map((item,index) => (
             <div key={index} className="flex justify-between">
-              <span>{item.title}</span>
-              <span>${item.price.toFixed(2)}</span>
+               <span>
+                {item.title} (x{item.quantity})
+              </span>
+              <span>${(item.price * item.quantity).toFixed(2)}</span>
               <button
                 onClick={() => handleRemoveFromCart(item.id)}
                 className="text-red-500 hover:text-red-700"
