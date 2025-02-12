@@ -10,7 +10,13 @@ export default function Login(){
     const router = useRouter()
     const {data: session,status} = useSession()
     const searchParams = useSearchParams()
-    const redirect = searchParams?.get("redirect")|| "/"
+    const [redirect, setRedirect] = useState("/");
+
+    useEffect(() => {
+      const paramRedirect = searchParams?.get("redirect");
+      if (paramRedirect) setRedirect(paramRedirect);
+    }, [searchParams]);
+
 
     useEffect(()=>{
       if(status==="authenticated"){
@@ -32,10 +38,6 @@ export default function Login(){
         }
 
     }
-
-    // useEffect(() => {
-    //   setToken(searchParams.get("token"));
-    // }, [searchParams]);
 
     if(status==="loading"){
       return <p>Loading...</p>
