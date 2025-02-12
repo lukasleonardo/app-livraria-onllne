@@ -20,6 +20,7 @@ const fetchReviews = async (id: string) => {
     return response.json();
 };
 
+
 export default function BookDetailsPage() {
     const params = useParams();
     const id = params?.id as string;

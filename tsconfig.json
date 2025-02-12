@@ -30,11 +30,12 @@
     }
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "test-email.js"
+    "next-env.d.ts",
+    "test-email.js",
+    "dist/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
