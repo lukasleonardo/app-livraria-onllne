@@ -26,12 +26,16 @@ export default function Login(){
             password
         })
         if(result?.ok){
-            router.push('/')
+            router.push(redirect)
         }else{
             alert('login failed!')
         }
 
     }
+
+    // useEffect(() => {
+    //   setToken(searchParams.get("token"));
+    // }, [searchParams]);
 
     if(status==="loading"){
       return <p>Loading...</p>
