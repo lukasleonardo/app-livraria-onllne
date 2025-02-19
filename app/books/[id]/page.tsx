@@ -14,6 +14,16 @@ const fetchBook = async (id: string) => {
 };
 
 
+
+const fetchReviews = async (id: string) => {
+    const response = await fetch(`/api/reviews?bookId=${id}`);
+    if (!response.ok) {
+        throw new Error("Failed to fetch reviews of book");
+    }
+    return response.json();
+};
+
+
 export default function BookDetailsPage() {
     const params = useParams();
     const id = params?.id as string;
