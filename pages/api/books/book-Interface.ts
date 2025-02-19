@@ -3,7 +3,16 @@ export type Book = {
     title: string
     author: string
     price: number
-    description: string
     stock: number
+    coverImage: string
+  }
+  export type BookDetails = {
+    id: number
+    title: string
+    summary: string
+    author: string
+    price: number
+    stock: number
+    coverImage: string
   }
   

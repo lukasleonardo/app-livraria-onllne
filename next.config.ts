@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   sassOptions: {
     includePaths: ['./app'],
   },
+  images: {
+    domains: ['www.gutenberg.org'],
+  },
 };
 
 export default nextConfig;
