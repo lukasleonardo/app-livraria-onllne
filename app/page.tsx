@@ -2,7 +2,7 @@
 import { BookList } from '../components/BookList'
 import  Cart  from '../components/Cart'
 import { useQuery} from '@tanstack/react-query';
-import { Book } from '@/components/BookItem';
+import { Book } from '../pages/api/books/book-Interface';
 import axios from 'axios';
 
 

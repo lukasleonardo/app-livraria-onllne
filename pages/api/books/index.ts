@@ -1,10 +1,9 @@
-import type{NextApiRequest,NextApiResponse} from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 import { Book } from "./book-Interface";
 
 
-
-  // Mock data // aki entraria a chamada para a api real 
-  export const books: Book[] = [
+  
+export const books: Book[] = [
     {
       id: 1,
       title: "The Great Gatsby",
@@ -47,12 +46,9 @@ import { Book } from "./book-Interface";
     },
   ]
 
-
-export default function bookDetailsHandler(req: NextApiRequest, 
-    res: NextApiResponse<Book | {message:string}>) {
-        const{id} = req.query
-        const book = books.find((b) => b.id === Number(id))
-        if(!book) return res.status(404).json({message:'Book not found'})
-            else
-    res.status(200).json(book)
-}
+  
+export default function bookHandler(req: NextApiRequest, res: NextApiResponse<Book[]>) {
+    res.status(200).json(books)
+  }
+  
+  

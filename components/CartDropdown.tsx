@@ -1,6 +1,6 @@
-import { removeFromCart } from "@/lib/cartSlice";
+import { removeFromCart, updateQuantity } from "@/lib/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { ShoppingCart, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 
 export default function CartDropdown() {
@@ -12,10 +12,13 @@ export default function CartDropdown() {
         dispatch(removeFromCart(id));
     };
 
+    const handleUpdateQuantity = (id: number, quantity: number) => {
+      dispatch(updateQuantity({ id, quantity }));
+    }
     const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
     return (
-        <div className="relative">
+      <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center text-foreground"
@@ -24,7 +27,9 @@ export default function CartDropdown() {
         >
           <ShoppingCart className="w-6 h-6 mr-2" />
           <span className="sr-only">Shopping cart</span>
-          <span className="bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs">{cartItems.length}</span>
+          <span className="bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs">
+            {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+          </span>
         </button>
         {isOpen && (
           <div
@@ -41,7 +46,22 @@ export default function CartDropdown() {
                     <div key={item.id} className="flex justify-between items-center mb-2">
                       <span className="text-foreground">{item.title}</span>
                       <div className="flex items-center">
-                        <span className="text-foreground mr-2">${item.price.toFixed(2)}</span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          className="text-muted-foreground hover:text-primary mr-2"
+                          disabled={item.quantity === 1}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-foreground mx-2">{item.quantity}</span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          className="text-muted-foreground hover:text-primary mr-2"
+                          disabled={item.quantity === item.stock}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                        <span className="text-foreground mr-2">${(item.price * item.quantity).toFixed(2)}</span>
                         <button
                           onClick={() => handleRemoveFromCart(item.id)}
                           className="text-muted-foreground hover:text-primary"
