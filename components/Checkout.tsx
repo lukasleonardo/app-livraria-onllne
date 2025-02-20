@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { clearCart, removeFromCart, updateQuantity } from "@/lib/cartSlice"
+import { clearCart, removeFromCart} from "@/lib/cartSlice"
 import { useSession } from "next-auth/react"
 import { useQuery } from "@tanstack/react-query"
 import  {ShippingRate} from "@/pages/api/shipping-calculation"
@@ -20,6 +20,21 @@ async function calculateShippingRate(cep:string):Promise<ShippingRate> {
   return response.json();
 }
 
+async function updateStock(items: { id: number; quantity: number }[]) {
+  const response = await fetch("/api/update-stock", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ items }),
+  })
+  if (!response.ok) {
+    throw new Error("Failed to update stock")
+  }
+  return response.json()
+}
+
+
 export default function Checkout(){
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -31,14 +46,6 @@ export default function Checkout(){
     const {data:session,status}= useSession()
     const prevCep = useRef('')
     
-    useEffect(() => {
-      // Check stock and update quantities if necessary
-      cartItems.forEach((item) => {
-        if (item.quantity > item.stock) {
-          dispatch(updateQuantity({ id: item.id, quantity: item.stock }))
-        }
-      })
-    }, [cartItems, dispatch])
   
     const subTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     
@@ -64,13 +71,16 @@ export default function Checkout(){
         }
     const handleSubmit= async (e:React.FormEvent)=>{
         e.preventDefault()
+        const orderDetails = {name,email,address,items:cartItems,total,cep,shippingCost,subTotal}
         try{
-          console.log('order submitted', {name,email,address,items:cartItems,total})
+          console.log('order submitted', {orderDetails})
+          await updateStock(cartItems.map(item=>({id:item.id,quantity:item.quantity})))
+
           const emailRes = await fetch("/api/email/order-confirmation", 
             {
               method:"POST",
               body:JSON.stringify(
-                {email,orderDetails:{name,email,address,items:cartItems,total}})})
+                {email,orderDetails})})
               if (!emailRes.ok) {
                 throw new Error("Failed to send order confirmation email")
               }

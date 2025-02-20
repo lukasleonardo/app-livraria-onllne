@@ -1,12 +1,13 @@
 'use client'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import React from 'react'
+import { QueryClientProvider } from "@tanstack/react-query"
 import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '../lib/store'
-import React from 'react'
 
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "@/lib/ThemeContext"
-const queryClient = new QueryClient()
+import { queryClient } from "../lib/bookCache"
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
