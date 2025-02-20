@@ -25,13 +25,18 @@ export const cartSlice = createSlice({
     initialState,
     reducers:{
         addToCart:(state,action:PayloadAction<Book>)=>{
-            const existingItem = state.items.find(item => item.id === action.payload.id);
-            if (existingItem) {
-                if(existingItem.quantity < action.payload.stock){
-                    existingItem.quantity++;
-                }else{
-                    state.items.push({ ...action.payload, quantity: 1 });
-                }
+            const existingItemIndex = state.items.findIndex((item) => item.id === action.payload.id)
+
+            if (existingItemIndex !== -1) {
+              // Item already exists in cart
+              const existingItem = state.items[existingItemIndex]
+              if (existingItem.quantity < action.payload.stock) {
+                // Increase quantity if stock allows
+                existingItem.quantity += 1
+              }
+            } else {
+              // Add new item to cart
+              state.items.push({ ...action.payload, quantity: 1 })
             }
         },
         removeFromCart:(state,action:PayloadAction<number>)=>{

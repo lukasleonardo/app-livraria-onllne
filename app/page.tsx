@@ -2,13 +2,10 @@
 import { BookList } from '../components/BookList'
 import { useQuery} from '@tanstack/react-query';
 import { Book } from '../pages/api/books/book-Interface';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { prefetchBooks } from '@/lib/bookCache';
 import axios from 'axios';
-import { useState } from 'react';
-
-
-
-// const fetchGroups = (): Promise<Book[]> =>
-//   axios.get('/api/books').then((response) => response.data)
 
 async function fetchBooks(page: number): Promise<Book[]> {
   try {
@@ -28,16 +25,19 @@ async function fetchBooks(page: number): Promise<Book[]> {
   }
 }
 
-
-
-
 export default function Home() {
   const [page, setPage] = useState(1)
+  const { status } = useSession()
   const { data: books, isLoading, error } = useQuery({
     queryKey: ['books', page],
     queryFn: () => fetchBooks(page),
     
   });
+
+  useEffect(() => {
+    prefetchBooks(page+1)
+  }, [page])
+
   if (isLoading)return <div>Loading...</div>  
   if(error) return <div>An error ocurred {error.message}</div>
   console.log("Books data:", books)

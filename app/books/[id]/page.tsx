@@ -2,12 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import BookReviews from "@/components/BookReviews";
-import { addToCart } from "@/lib/cartSlice";
-import { useAppDispatch } from "@/lib/hooks";
-import axios from "axios";
 import { BookDetails } from "@/pages/api/books/book-Interface";
+import { useAppDispatch } from "@/lib/hooks";
+import { addToCart } from "@/lib/cartSlice";
+import BookReviews from "@/components/BookReviews";
 import Image from 'next/image'
+import axios from "axios";
+
 // const fetchBook = async (id: string) => {
 //     const response = await fetch(`/api/books/${id}`);
 //     if (!response.ok) {
@@ -38,13 +39,13 @@ async function fetchBook(id: string): Promise<BookDetails> {
 
 
 
-const fetchReviews = async (id: string) => {
-    const response = await fetch(`/api/reviews?bookId=${id}`);
-    if (!response.ok) {
-        throw new Error("Failed to fetch reviews of book");
-    }
-    return response.json();
-};
+// const fetchReviews = async (id: string) => {
+//     const response = await fetch(`/api/reviews?bookId=${id}`);
+//     if (!response.ok) {
+//         throw new Error("Failed to fetch reviews of book");
+//     }
+//     return response.json();
+// };
 
 
 export default function BookDetailsPage() {
@@ -58,13 +59,12 @@ export default function BookDetailsPage() {
         
     });
     
-
-
     if(isLoadingBook ) return <div>Loading...</div>
     if(errorBook ) return <div>An error ocurred {errorBook?.message}</div>
     if (!book)return<div>Book is undefined...</div>
 
     const handleAddToCart = () => {
+      console.log("Adding book to cart:", book.stock)
       if (book.stock > 0) {
         dispatch(addToCart(book))
       }
